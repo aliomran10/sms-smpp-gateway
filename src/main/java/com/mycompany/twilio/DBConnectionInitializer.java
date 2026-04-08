@@ -21,7 +21,7 @@ public class DBConnectionInitializer implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = DriverManager.getConnection("jdbc:postgresql://ep-dawn-base-ag3iq1vt-pooler.c-2.eu-central-1.aws.neon.tech/Twilio-SMS", "neondb_owner", "npg_jwyQ23SJiUoz&sslmode");
+            Connection con = DriverManager.getConnection("jdbc:postgresql://ep-dawn-base-ag3iq1vt-pooler.c-2.eu-central-1.aws.neon.tech/Twilio-SMS-Management?sslmode=require&channelBinding=require", "neondb_owner", "npg_jwyQ23SJiUoz");
             ServletContext ctx = sce.getServletContext();
             ctx.setAttribute("DBConnection", con);
 
