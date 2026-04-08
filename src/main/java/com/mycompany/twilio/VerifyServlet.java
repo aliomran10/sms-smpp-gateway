@@ -61,7 +61,7 @@ public class VerifyServlet extends HttpServlet {
                 int rs = ps.executeUpdate();
                 if (rs == 0) {
                     //response.sendRedirect("Registration.html");
-                    response.sendRedirect("Registration.html");
+                    response.sendRedirect("Verify.html?error=1");
                 } else {
                     response.sendRedirect("Profile.html");
                 }
