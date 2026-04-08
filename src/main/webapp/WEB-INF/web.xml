@@ -12,6 +12,10 @@
         <servlet-name>VerifyServlet</servlet-name>
         <servlet-class>com.mycompany.twilio.VerifyServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>OTPgenerationServlet</servlet-name>
+        <servlet-class>com.mycompany.twilio.OTPgenerationServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
@@ -19,6 +23,10 @@
     <servlet-mapping>
         <servlet-name>VerifyServlet</servlet-name>
         <url-pattern>/VerifyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OTPgenerationServlet</servlet-name>
+        <url-pattern>/OTPgenerationServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -90,8 +90,8 @@ public class RegisterServlet extends HttpServlet {
 //                out.println("</body></html>");
 //            }
 
-            response.sendRedirect("VerifyServlet");
-
+         //   response.sendRedirect("VerifyServlet");
+            request.getRequestDispatcher("OTPgenerationServlet").forward(request, response);
             con.close();
         } catch (Exception e) {
             out.println("Error: " + e.getMessage());
