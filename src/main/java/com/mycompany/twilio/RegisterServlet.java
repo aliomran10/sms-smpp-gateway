@@ -46,6 +46,7 @@ public class RegisterServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         String msisdn = request.getParameter("msisdn");
+        //set the attribute for the session to use it while sending OTP in OTPgenerationServlet 
         session.setAttribute("msisdn", msisdn);
 
         String physicalAddress = request.getParameter("physicalAddress");
