@@ -63,6 +63,7 @@ public class VerifyServlet extends HttpServlet {
                     //response.sendRedirect("Registration.html");
                     response.sendRedirect("Verify.html?error=1");
                 } else {
+                    session.setAttribute("isLoggedIn", "yes");
                     response.sendRedirect("Profile.html");
                 }
             }
