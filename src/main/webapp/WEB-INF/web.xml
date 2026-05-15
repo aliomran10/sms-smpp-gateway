@@ -20,6 +20,14 @@
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>com.mycompany.twilio.LoginServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ResendOTPServlet</servlet-name>
+        <servlet-class>com.mycompany.twilio.ResendOTPServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InboundSMSWebhookServlet</servlet-name>
+        <servlet-class>com.mycompany.twilio.InboundSMSWebhookServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
@@ -35,6 +43,14 @@
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ResendOTPServlet</servlet-name>
+        <url-pattern>/ResendOTPServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InboundSMSWebhookServlet</servlet-name>
+        <url-pattern>/InboundSMSWebhookServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

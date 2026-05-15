@@ -13,11 +13,7 @@
     </properties>
     
     <dependencies>
-        <dependency>
-            <groupId>com.twilio.sdk</groupId>
-            <artifactId>twilio</artifactId>
-            <version>10.1.0</version>
-        </dependency>
+        
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
@@ -29,7 +25,14 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
+       
+        <dependency>
+            <groupId>com.twilio.sdk</groupId>
+            <artifactId>twilio</artifactId>
+            <version>10.1.2</version>
+        </dependency>
     </dependencies>
+    
     
     <build>
         <plugins>
