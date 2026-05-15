@@ -53,16 +53,16 @@ public class LoginServlet extends HttpServlet {
                 // here I can extract any info that other pages would need 
                 String databaseEmail = rs.getString("email");
                 String databasePassword = rs.getString("password_hash");
-                //save the is admin in session so can be used later 
+                //save the is admin in session in case needed later 
                 String is_adimn =rs.getString("is_admin");
                 session.setAttribute("is_admin", is_adimn);
                 
                 if(databaseEmail.equals(inputEmail) && databasePassword.equals(inputPassword))
                 {
-                    //login success
+                    
                     response.sendRedirect("profile.html");
                 } else{
-                    //wrong email or password 
+                    
                     response.sendRedirect("Login.html?error=1");
                 }
                

@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
         session.setAttribute("msisdn", msisdn);
 
         String physicalAddress = request.getParameter("physicalAddress");
-        // Teilio 
+        // Twilio 
         String twilioSid = request.getParameter("twilioSid");
         String twilioToken = request.getParameter("twilioToken");
         String twilioSender = request.getParameter("twilioSender");
