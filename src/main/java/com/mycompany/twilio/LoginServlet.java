@@ -44,35 +44,41 @@ public class LoginServlet extends HttpServlet {
 
         Connection con = (Connection) ctx.getAttribute("DBConnection");
         try {
-            PreparedStatement pstm = con.prepareStatement("SELECT email, password_hash, is_admin FROM users WHERE emial= ?");
+            PreparedStatement pstm = con.prepareStatement("SELECT msisdn, user_id , email, password_hash, is_admin FROM users WHERE email= ?");
             pstm.setString(1, inputEmail);
-            
-            ResultSet rs= pstm.executeQuery();
+
+            ResultSet rs = pstm.executeQuery();
             //verify and extract from database
-            if(rs.next()){
+            if (rs.next()) {
                 // here I can extract any info that other pages would need 
                 String databaseEmail = rs.getString("email");
                 String databasePassword = rs.getString("password_hash");
                 //save the is admin in session so can be used later 
-                String is_adimn =rs.getString("is_admin");
+                String is_adimn = rs.getString("is_admin");
+                String msisdn = rs.getString("msisdn");
+                int userId = rs.getInt("user_id");
                 session.setAttribute("is_admin", is_adimn);
-                
-                if(databaseEmail.equals(inputEmail) && databasePassword.equals(inputPassword))
-                {
+
+                if (databaseEmail.equals(inputEmail) && databasePassword.equals(inputPassword)) {
                     //login success
-                    response.sendRedirect("profile.html");
-                } else{
+                    session.setAttribute("userId",userId);
+
+                    session.setAttribute("is_admin",is_adimn);
+                    
+                    session.setAttribute("msisdn",msisdn);
+                    
+                    session.setAttribute("isLoggedIn","yes");
+                    
+                    response.sendRedirect("home");
+                } else {
                     //wrong email or password 
                     response.sendRedirect("Login.html?error=1");
                 }
-               
-                
-            }else { 
+
+            } else {
                 //so the inserted email doesnt exist or wrong email input from user 
                 response.sendRedirect("Login.html?error=1");
             }
-            
-            
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,5 +86,3 @@ public class LoginServlet extends HttpServlet {
 
     }
 }
-
-

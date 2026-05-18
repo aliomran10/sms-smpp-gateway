@@ -26,7 +26,7 @@ public class DBConnectionInitializer implements ServletContextListener {
             ctx.setAttribute("DBConnection", con);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();    
         }
     }
 
