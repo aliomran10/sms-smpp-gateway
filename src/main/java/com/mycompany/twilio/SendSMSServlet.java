@@ -20,11 +20,16 @@ import java.sql.ResultSet;
  * @author roqaya
  */
 
-
-
-
 public class SendSMSServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest request,
+            HttpServletResponse response)
+            throws ServletException, IOException {
 
+        response.sendRedirect("SendSMS.html");
+    }
+    
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response)
