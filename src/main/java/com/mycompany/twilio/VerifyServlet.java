@@ -64,6 +64,7 @@ public class VerifyServlet extends HttpServlet {
                     response.sendRedirect("Verify.html?error=1");
                 } else {
                     session.setAttribute("isLoggedIn", "yes");
+                    session.setAttribute("userId", session.getAttribute("userId"));
                     response.sendRedirect("Profile.html");
                 }
             }
