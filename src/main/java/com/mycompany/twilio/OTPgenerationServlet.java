@@ -22,15 +22,25 @@ import jakarta.servlet.http.HttpSession;
  */
 public class OTPgenerationServlet extends HttpServlet {
   // the twilio auth for the developer that will send to the user 
-    
-    public static final String ACCOUNT_SID = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-    public static final String AUTH_TOKEN = "your_auth_token_here";
-    public static final String DEV_MSISDN="01200018782";
-    
+  ///Hard coded for Testing not used in prod  
+//    public static final String ACCOUNT_SID = "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+//    public static final String AUTH_TOKEN = "XXXXXXXXXX";
+//    public static final String DEV_MSISDN="012XXXXXXXXXX";
+//    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
            HttpSession session = request.getSession(false);
-        String msisdn = (String) session.getAttribute("msisdn");
+           if(session == null){
+               response.sendRedirect("Login.html");
+               return ;
+           }
+         
+          /// Getting session attributes 
+        String msisdn = (String) session.getAttribute("msisdn"); /// the number registerd wit in twilio (012000 ....)
+        String ACCOUNT_SID= (String) session.getAttribute("twilioSid"); 
+        String AUTH_TOKEN =(String) session.getAttribute("twilioToken");
+        String DEV_MSISDN =(String) session.getAttribute("twilioSender"); // twilio trail account number (+1......) 
+        
         // generate the random OTP verification code 
         Random rand = new Random();
         StringBuilder sb = new StringBuilder();
@@ -45,8 +55,8 @@ public class OTPgenerationServlet extends HttpServlet {
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         
          Message message = Message.creator(
-                    new PhoneNumber(msisdn),   
-                    new PhoneNumber(DEV_MSISDN), 
+                    new PhoneNumber(msisdn),   //send to
+                    new PhoneNumber(DEV_MSISDN), //from
                     otp                  
             ).create();
          

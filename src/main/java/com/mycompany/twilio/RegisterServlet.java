@@ -45,9 +45,7 @@ public class RegisterServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         String email = request.getParameter("email");
-        String msisdn = request.getParameter("msisdn");
-        //set the attribute for the session to use it while sending OTP in OTPgenerationServlet 
-        session.setAttribute("msisdn", msisdn);
+        String msisdn = request.getParameter("msisdn");        
 
         String physicalAddress = request.getParameter("physicalAddress");
         // Teilio 
@@ -92,6 +90,12 @@ public class RegisterServlet extends HttpServlet {
 //            }
 
             //   response.sendRedirect("VerifyServlet");
+            
+            //Sending the twilio SID and AUTH Token to the OTP generation step via session attributes 
+            session.setAttribute("msisdn", msisdn);
+            session.setAttribute("twilioSid", twilioSid);
+            session.setAttribute("twilioToken", twilioToken);
+            session.setAttribute("twilioSender",twilioSender);
             request.getRequestDispatcher("OTPgenerationServlet").forward(request, response);
             con.close();
         } catch (Exception e) {
