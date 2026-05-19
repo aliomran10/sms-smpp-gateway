@@ -91,13 +91,13 @@ public class RegisterServlet extends HttpServlet {
 
             //   response.sendRedirect("VerifyServlet");
             
-            //Sending the twilio SID and AUTH Token to the OTP generation step via session attributes 
+            // Sending the twilio SID and AUTH Token to the OTP generation step via session attributes
             session.setAttribute("msisdn", msisdn);
             session.setAttribute("twilioSid", twilioSid);
             session.setAttribute("twilioToken", twilioToken);
-            session.setAttribute("twilioSender",twilioSender);
-            request.getRequestDispatcher("OTPgenerationServlet").forward(request, response);
-            con.close();
+            session.setAttribute("twilioSender", twilioSender);
+            request.getRequestDispatcher("/OTPgenerationServlet").forward(request, response);
+            // Do NOT close the shared connection - it is managed by DBConnectionInitializer
         } catch (Exception e) {
             out.println("Error: " + e.getMessage());
             e.printStackTrace(out);

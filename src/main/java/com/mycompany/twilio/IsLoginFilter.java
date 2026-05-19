@@ -33,15 +33,15 @@ public class IsLoginFilter implements Filter {
 
         HttpServletResponse resp =(HttpServletResponse) response;
 
-        String path =req.getRequestURI();
+        String path = req.getRequestURI();
         // make the login, registration, otp generation and verification pages accessible without login
         boolean allowedPath = path.contains("Login")
-                            || path.contains("Registration") 
-                            || path.contains("OTP") 
-                            || path.contains("Verify") ;
+                            || path.contains("Registration")
+                            || path.contains("RegisterServlet")
+                            || path.contains("OTP")
+                            || path.contains("Verify");
 
-                               
-        // skip static pages 
+        // skip static pages
         boolean staticResource = path.endsWith(".css")
                             || path.endsWith(".js")
                             || path.endsWith(".png")
