@@ -52,14 +52,14 @@ public class LoginServlet extends HttpServlet {
                 // here I can extract any info that other pages would need 
                 String databaseEmail = rs.getString("email");
                 String databasePassword = rs.getString("password_hash");
-                //save the is admin in session so can be used later 
+                //save the is admin in session in case needed later 
                 String is_adimn = rs.getString("is_admin");
                 String msisdn = rs.getString("msisdn");
                 int userId = rs.getInt("user_id");
                 session.setAttribute("is_admin", is_adimn);
 
                 if (databaseEmail.equals(inputEmail) && databasePassword.equals(inputPassword)) {
-                    //login success
+                    
                     session.setAttribute("userId",userId);
 
                     session.setAttribute("is_admin",is_adimn);
@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet {
                     
                     response.sendRedirect("home");
                 } else {
-                    //wrong email or password 
+                    
                     response.sendRedirect("Login.html?error=1");
                 }
 
