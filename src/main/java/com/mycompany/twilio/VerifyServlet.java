@@ -26,7 +26,7 @@ public class VerifyServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session != null && "yes".equals(session.getAttribute("isLoggedIn"))) {
-            response.sendRedirect("Profile.html");
+            response.sendRedirect("home.jsp");
             return;
         }
 
@@ -51,9 +51,10 @@ public class VerifyServlet extends HttpServlet {
 
                 ServletContext ctx = getServletContext();
                 Connection con = (Connection) ctx.getAttribute("DBConnection");
-                PreparedStatement ps = con.prepareStatement("UPDATE users"
-                        + " SET is_verified = true"
-                        + " WHERE msisdn=?");
+                PreparedStatement ps = con.prepareStatement(
+                          "UPDATE users "
+                        + "SET is_verified = true "
+                        + "WHERE msisdn=? ");
 
                 String msisdn = (String) session.getAttribute("msisdn");
                 ps.setString(1, msisdn);
@@ -64,8 +65,9 @@ public class VerifyServlet extends HttpServlet {
                     response.sendRedirect("Verify.html?error=1");
                 } else {
                     session.setAttribute("isLoggedIn", "yes");
-                    session.setAttribute("userId", session.getAttribute("userId"));
-                    response.sendRedirect("Profile.html");
+                    //session.setAttribute("userId", session.getAttribute("userId"));
+                    
+                    response.sendRedirect("Login.html");
                 }
             }
         } catch (Exception e) {

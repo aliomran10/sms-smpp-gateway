@@ -35,13 +35,18 @@ public class IsLoginFilter implements Filter {
 
         String path =req.getRequestURI();
         // make the login, registration, otp generation and verification pages accessible without login
-        boolean allowedPath = path.contains("Login")|| path.contains("Registration") || path.contains("OTP") || path.contains("Verify") ;
+        boolean allowedPath = path.contains("Login")
+                            || path.contains("Registration") 
+                            || path.contains("OTP") 
+                            || path.contains("Verify") ;
+
+                               
         // skip static pages 
         boolean staticResource = path.endsWith(".css")
                             || path.endsWith(".js")
                             || path.endsWith(".png")
                             || path.endsWith(".jpg");
-                            
+
         System.out.println(req.getRequestURI());
         HttpSession session =req.getSession(false);
 
@@ -50,7 +55,7 @@ public class IsLoginFilter implements Filter {
         //check if user have session,logged in and verified to have id in the database 
 
         boolean loggedIn = session != null 
-                        && session.getAttribute("userId") != null 
+                        //&& session.getAttribute("userId") != null 
                         && "yes".equals(session.getAttribute("isLoggedIn")) ;
 
         if (loggedIn || allowedPath|| staticResource) {

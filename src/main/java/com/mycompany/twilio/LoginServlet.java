@@ -68,7 +68,7 @@ public class LoginServlet extends HttpServlet {
                     
                     session.setAttribute("isLoggedIn","yes");
                     
-                    response.sendRedirect("home");
+                    response.sendRedirect("home.jsp");
                 } else {
                     
                     response.sendRedirect("Login.html?error=1");
