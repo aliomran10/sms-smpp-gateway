@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
+import com.mycompany.twilio.model.User;
+import com.mycompany.twilio.dao.UserDao;
 import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,12 +30,12 @@ public class ProfileServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        HttpSession session =
-                request.getSession(false);
-
-        
-        int userId =
-                (Integer) session.getAttribute("userId");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect("Login.html");
+            return;
+        }
+        int userId = (Integer) session.getAttribute("userId");
 
         ServletContext context =
                 getServletContext();
@@ -62,12 +64,12 @@ public class ProfileServlet extends HttpServlet {
             HttpServletResponse response
     ) throws ServletException, IOException {
 
-        HttpSession session =
-                request.getSession(false);
-
-
-        int userId =
-                (Integer) session.getAttribute("userId");
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            response.sendRedirect("Login.html");
+            return;
+        }
+        int userId = (Integer) session.getAttribute("userId");
 
         ServletContext context =
                 getServletContext();

@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
+import com.mycompany.twilio.dao.MessageDao;
 import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,18 +23,17 @@ import java.sql.Connection;
 @WebServlet("/delete-sms")
 public class SmsDeleteServlet extends HttpServlet {
 
-   @Override
+    @Override
     protected void doPost(
             HttpServletRequest request,
-            HttpServletResponse response
-    ) throws ServletException, IOException {
+            HttpServletResponse response) throws ServletException, IOException {
 
         String msgIdStr = request.getParameter("msgId");
 
         HttpSession session = request.getSession(false);
-        
+
         ServletContext context = getServletContext();
-       
+
         try {
 
             int msgId = Integer.parseInt(msgIdStr);

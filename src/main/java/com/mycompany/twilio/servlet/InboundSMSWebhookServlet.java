@@ -3,9 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.sql.PreparedStatement;
  * @author roqaya
  */
 
-
+@WebServlet("/InboundSMSWebhookServlet")
 public class InboundSMSWebhookServlet extends HttpServlet {
 
     @Override

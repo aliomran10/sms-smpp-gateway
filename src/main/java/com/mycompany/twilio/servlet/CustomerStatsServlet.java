@@ -1,5 +1,6 @@
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -14,6 +15,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
+/**
+ *
+ * @author Ali
+ */
 /**
  * CustomerStatsServlet — Admin only.
  *
@@ -36,6 +41,7 @@ import java.sql.Timestamp;
  * <servlet-class>com.mycompany.twilio.CustomerStatsServlet</servlet-class>
  * <url-pattern>/CustomerStatsServlet</url-pattern>
  */
+@WebServlet("/CustomerStatsServlet")
 public class CustomerStatsServlet extends HttpServlet {
 
     @Override

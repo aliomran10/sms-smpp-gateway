@@ -2,12 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,68 +21,69 @@ import java.sql.ResultSet;
  *
  * @author omar
  */
+@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(request.getContextPath() + "/Login.html");
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // if logged in
         HttpSession session = request.getSession(false);
         if (session != null && "yes".equals(session.getAttribute("isLoggedIn"))) {
             response.sendRedirect("Profile.html");
             return;
         }
-        //create the session
+
         session = request.getSession(true);
 
-        //getting the context to use database
         ServletContext ctx = getServletContext();
-        //getting attribute from login 
         String inputEmail = request.getParameter("email");
         String inputPassword = request.getParameter("password");
-
         Connection con = (Connection) ctx.getAttribute("DBConnection");
-        try {
-            PreparedStatement pstm = con.prepareStatement("SELECT msisdn, user_id , email, password_hash, is_admin FROM users WHERE email= ?");
-            pstm.setString(1, inputEmail);
 
+        try {
+            PreparedStatement pstm = con.prepareStatement(
+                    "SELECT msisdn, user_id, email, password_hash, is_admin "
+                    + "FROM users WHERE email = ?");
+            pstm.setString(1, inputEmail);
             ResultSet rs = pstm.executeQuery();
-            //verify and extract from database
+
             if (rs.next()) {
-                // here I can extract any info that other pages would need 
                 String databaseEmail = rs.getString("email");
                 String databasePassword = rs.getString("password_hash");
-                //save the is admin in session in case needed later 
-                String is_adimn = rs.getString("is_admin");
+                // Use getBoolean — PostgreSQL returns "t"/"f" for booleans,
+                // not "true"/"false", so getString + equalsIgnoreCase("true") always fails
+                boolean isAdmin = rs.getBoolean("is_admin");
                 String msisdn = rs.getString("msisdn");
                 int userId = rs.getInt("user_id");
-                session.setAttribute("is_admin", is_adimn);
 
                 if (databaseEmail.equals(inputEmail) && databasePassword.equals(inputPassword)) {
-                    
-                    session.setAttribute("userId",userId);
+                    session.setAttribute("userId", userId);
+                    session.setAttribute("is_admin", String.valueOf(isAdmin)); // "true" or "false"
+                    session.setAttribute("msisdn", msisdn);
+                    session.setAttribute("isLoggedIn", "yes");
 
-                    session.setAttribute("is_admin",is_adimn);
-                    
-                    session.setAttribute("msisdn",msisdn);
-                    
-                    session.setAttribute("isLoggedIn","yes");
-                    
-                    response.sendRedirect("home.jsp");
+                    if (isAdmin) {
+                        System.out.println("Admin login: " + inputEmail);
+                        response.sendRedirect(request.getContextPath() + "/admin/stats");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/home.jsp");
+                    }
                 } else {
-                    
                     response.sendRedirect("Login.html?error=1");
                 }
-
             } else {
-                //so the inserted email doesnt exist or wrong email input from user 
                 response.sendRedirect("Login.html?error=1");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

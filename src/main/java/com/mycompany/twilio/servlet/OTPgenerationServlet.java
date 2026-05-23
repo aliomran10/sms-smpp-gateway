@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,12 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author omar
  */
+@WebServlet("/OTPgenerationServlet")
 public class OTPgenerationServlet extends HttpServlet {
     // the twilio auth for the developer that will send to the user 
 
@@ -40,7 +42,7 @@ public class OTPgenerationServlet extends HttpServlet {
 
         /// Getting session attributes 
         String msisdn = (String) session.getAttribute("msisdn");
-        if(msisdn.startsWith("0")){
+        if(msisdn != null && msisdn.startsWith("0")){
             msisdn = "+2" + msisdn;
         }
         /// the number registerd wit in twilio (012000 ....)

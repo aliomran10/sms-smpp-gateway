@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import java.io.*;
 import java.sql.*;
@@ -14,11 +14,13 @@ import jakarta.servlet.ServletContext;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  *
  * @author omar
  */
+@WebServlet("/VerifyServlet")
 public class VerifyServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -81,10 +83,17 @@ public class VerifyServlet extends HttpServlet {
                 String msisdn = (String) session.getAttribute("msisdn");
                 ps.setString(1, msisdn);
 
-                int rs = ps.executeUpdate();
-                if (rs == 0) {
+                int updatedRows = ps.executeUpdate();
+                if (updatedRows == 0) {
                     response.sendRedirect("Verify.html?error=1");
                 } else {
+                    PreparedStatement ps2 = con.prepareStatement("SELECT user_id, is_admin FROM users WHERE msisdn = ?");
+                    ps2.setString(1, msisdn);
+                    ResultSet rs = ps2.executeQuery();
+                    if (rs.next()) {
+                        session.setAttribute("userId", rs.getInt("user_id"));
+                        session.setAttribute("is_admin", String.valueOf(rs.getBoolean("is_admin")));
+                    }
                     session.setAttribute("isLoggedIn", "yes");
                     response.sendRedirect("home.jsp");
                 }

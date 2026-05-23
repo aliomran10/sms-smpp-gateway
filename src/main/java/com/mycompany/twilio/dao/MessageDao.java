@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.dao;
 
+import com.mycompany.twilio.model.Message;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,17 +28,16 @@ public class MessageDao {
             String msisdn,
             String keyword,
             String fromDate,
-            String toDate
-    ) throws Exception {
+            String toDate) throws Exception {
 
         List<Message> list = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder("""
-        SELECT *
-        FROM messages
-        WHERE sender_no = ? 
-        OR recipient_no =?
-    """);
+                    SELECT *
+                    FROM messages
+                    WHERE sender_no = ?
+                    OR recipient_no =?
+                """);
 
         List<Object> params = new ArrayList<>();
 
@@ -47,12 +47,12 @@ public class MessageDao {
         if (keyword != null && !keyword.trim().isEmpty()) {
 
             sql.append("""
-            AND (
-                msg ILIKE ?
-                OR sender_no ILIKE ?
-                OR recipient_no ILIKE ?
-            )
-        """);
+                        AND (
+                            msg ILIKE ?
+                            OR sender_no ILIKE ?
+                            OR recipient_no ILIKE ?
+                        )
+                    """);
 
             String search = "%" + keyword + "%";
 
@@ -68,9 +68,7 @@ public class MessageDao {
 
             params.add(
                     Timestamp.valueOf(
-                            fromDate.replace("T", " ") + ":00"
-                    )
-            );
+                            fromDate.replace("T", " ") + ":00"));
         }
 
         // to date
@@ -80,15 +78,12 @@ public class MessageDao {
 
             params.add(
                     Timestamp.valueOf(
-                            toDate.replace("T", " ") + ":00"
-                    )
-            );
+                            toDate.replace("T", " ") + ":00"));
         }
 
         sql.append(" ORDER BY sent_at DESC");
 
-        PreparedStatement ps
-                = con.prepareStatement(sql.toString());
+        PreparedStatement ps = con.prepareStatement(sql.toString());
 
         for (int i = 0; i < params.size(); i++) {
 
@@ -114,13 +109,12 @@ public class MessageDao {
     }
 
     public boolean deleteMessage(
-            int msgId
-    ) throws Exception {
+            int msgId) throws Exception {
 
         String sql = """
-                        DELETE FROM messages
-                        WHERE msg_id = ?
-                      """;
+                  DELETE FROM messages
+                  WHERE msg_id = ?
+                """;
 
         PreparedStatement ps = con.prepareStatement(sql);
 

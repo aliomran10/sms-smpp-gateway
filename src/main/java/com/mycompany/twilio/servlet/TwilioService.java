@@ -2,18 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
-
 /**
  *
  * @author roqaya
  */
-
 
 public class TwilioService {
 
@@ -31,8 +29,7 @@ public class TwilioService {
         Message message = Message.creator(
                 new PhoneNumber(to),
                 new PhoneNumber(from),
-                body
-        ).create();
+                body).create();
 
         return message;
     }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.filter;
 
 import java.io.IOException;
 import jakarta.servlet.Filter;
@@ -22,43 +22,43 @@ import jakarta.servlet.http.HttpSession;
  */
 @WebFilter("/*")
 public class IsLoginFilter implements Filter {
-    
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
-        
-        HttpServletRequest req =(HttpServletRequest) request;
 
-        HttpServletResponse resp =(HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest) request;
+
+        HttpServletResponse resp = (HttpServletResponse) response;
 
         String path = req.getRequestURI();
-        // make the login, registration, otp generation and verification pages accessible without login
+        // make the login, registration, otp generation and verification pages
+        // accessible without login
         boolean allowedPath = path.contains("Login")
-                            || path.contains("Registration")
-                            || path.contains("RegisterServlet")
-                            || path.contains("OTP")
-                            || path.contains("Verify");
+                || path.contains("Registration")
+                || path.contains("RegisterServlet")
+                || path.contains("OTP")
+                || path.contains("Verify");
 
         // skip static pages
         boolean staticResource = path.endsWith(".css")
-                            || path.endsWith(".js")
-                            || path.endsWith(".png")
-                            || path.endsWith(".jpg");
+                || path.endsWith(".js")
+                || path.endsWith(".png")
+                || path.endsWith(".jpg");
 
         System.out.println(req.getRequestURI());
-        HttpSession session =req.getSession(false);
+        HttpSession session = req.getSession(false);
 
         // boolean loggedIn = session != null
-        //                    && session.getAttribute("userId") != null;
-        //check if user have session,logged in and verified to have id in the database 
+        // && session.getAttribute("userId") != null;
+        // check if user have session,logged in and verified to have id in the database
 
-        boolean loggedIn = session != null 
-                        //&& session.getAttribute("userId") != null 
-                        && "yes".equals(session.getAttribute("isLoggedIn")) ;
+        boolean loggedIn = session != null
+                // && session.getAttribute("userId") != null
+                && "yes".equals(session.getAttribute("isLoggedIn"));
 
-        if (loggedIn || allowedPath|| staticResource) {
+        if (loggedIn || allowedPath || staticResource) {
 
             chain.doFilter(request, response);
 
@@ -66,8 +66,7 @@ public class IsLoginFilter implements Filter {
 
             resp.sendRedirect("Login.html");
         }
-    
+
     }
-    
-    
+
 }

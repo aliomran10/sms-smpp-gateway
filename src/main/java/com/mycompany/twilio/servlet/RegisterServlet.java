@@ -2,11 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.twilio;
+package com.mycompany.twilio.servlet;
 
 import java.io.*;
 import java.sql.*;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.util.Set;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author omar
  */
+@WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 
     @Override
@@ -29,32 +31,32 @@ public class RegisterServlet extends HttpServlet {
             response.sendRedirect("Profile.html");
             return;
         }
-        //create the session
+        // create the session
         session = request.getSession(true);
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         String fullName = request.getParameter("fullName");
         String birthDatestr = request.getParameter("birthday");
-        //convert to local date 
+        // convert to local date
         LocalDate localDate = LocalDate.parse(birthDatestr, DateTimeFormatter.ISO_DATE);
-        // convert to java sql date 
+        // convert to java sql date
         Date sqlDate = Date.valueOf(localDate);
 
         String job = request.getParameter("job");
         String password = request.getParameter("password");
 
         String email = request.getParameter("email");
-        String msisdn = request.getParameter("msisdn");        
+        String msisdn = request.getParameter("msisdn");
 
         String physicalAddress = request.getParameter("physicalAddress");
-        // Twilio 
+        // Twilio
         String twilioSid = request.getParameter("twilioSid");
         String twilioToken = request.getParameter("twilioToken");
         String twilioSender = request.getParameter("twilioSender");
 
         try {
-            //getting the connection using servlet context 
+            // getting the connection using servlet context
             ServletContext ctx = getServletContext();
             Connection con = (Connection) ctx.getAttribute("DBConnection");
 
@@ -69,7 +71,7 @@ public class RegisterServlet extends HttpServlet {
             ps.setString(4, email);
 
             ps.setString(5, password);
-            Boolean is_admin = false; // by defualt any user is not an admine 
+            Boolean is_admin = false; // by defualt any user is not an admine
 
             ps.setBoolean(6, is_admin);
             ps.setString(7, msisdn);
@@ -78,20 +80,21 @@ public class RegisterServlet extends HttpServlet {
             ps.setString(9, twilioSid);
             ps.setString(10, twilioToken);
             ps.setString(11, twilioSender);
-            //ps.setString(5, currentTimeStamp); is set defualt = current time stamp 
-            // is verified value is false by defualt 
+            // ps.setString(5, currentTimeStamp); is set defualt = current time stamp
+            // is verified value is false by defualt
 
             int result = ps.executeUpdate();
-//            if (result > 0) {
-//                out.println("<html><body>");
-//                out.println("<h1>Registration Successful!</h1>");
-//                out.println("<a href='loginDB.html'>Go to Login</a>");
-//                out.println("</body></html>");
-//            }
+            // if (result > 0) {
+            // out.println("<html><body>");
+            // out.println("<h1>Registration Successful!</h1>");
+            // out.println("<a href='loginDB.html'>Go to Login</a>");
+            // out.println("</body></html>");
+            // }
 
-            //   response.sendRedirect("VerifyServlet");
-            
-            // Sending the twilio SID and AUTH Token to the OTP generation step via session attributes
+            // response.sendRedirect("VerifyServlet");
+
+            // Sending the twilio SID and AUTH Token to the OTP generation step via session
+            // attributes
             session.setAttribute("msisdn", msisdn);
             session.setAttribute("twilioSid", twilioSid);
             session.setAttribute("twilioToken", twilioToken);
