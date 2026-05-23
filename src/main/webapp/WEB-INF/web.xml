@@ -1,89 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee                              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <!-- ── Listeners ─────────────────────────────────────────────────────── -->
+    <!--  ══════════════════════════════════════════════════════════════════
+         FILTERS
+         IsLoginFilter  : guards every URL — redirects unauthenticated users
+         AdminFilter    : additionally enforces is_admin for /admin/* URLs
+    ═══════════════════════════════════════════════════════════════════════  -->
     <filter>
         <filter-name>IsLoginFilter</filter-name>
-        <filter-class>com.mycompany.twilio.IsLoginFilter</filter-class>
+        <filter-class>com.mycompany.twilio.filter.IsLoginFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>IsLoginFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>com.mycompany.twilio.filter.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/admin</url-pattern>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+    <!--  ══════════════════════════════════════════════════════════════════
+         LISTENER — opens the shared DB connection on startup
+    ═══════════════════════════════════════════════════════════════════════  -->
     <listener>
         <description>Opens the shared DB connection on startup</description>
-        <listener-class>com.mycompany.twilio.DBConnectionInitializer</listener-class>
+        <listener-class>com.mycompany.twilio.util.DBConnectionInitializer</listener-class>
     </listener>
-    <!-- ── Existing servlets (unchanged) ─────────────────────────────────── -->
+<!--     ── Servlets ─────────────────────────────────── 
     <servlet>
         <servlet-name>RegisterServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.RegisterServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.RegisterServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>VerifyServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.VerifyServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.VerifyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>OTPgenerationServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.OTPgenerationServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.OTPgenerationServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.LoginServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.LoginServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ResendOTPServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.ResendOTPServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.ResendOTPServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InboundSMSWebhookServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.InboundSMSWebhookServlet</servlet-class>
-    </servlet>
-    <!-- ── New admin servlets ────────────────────────────────────────────── -->
-    <servlet>
-        <servlet-name>AddCustomerServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.AddCustomerServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>EditCustomerServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.EditCustomerServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DeleteCustomerServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.DeleteCustomerServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ListCustomersServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.ListCustomersServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CustomerStatsServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.CustomerStatsServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.InboundSMSWebhookServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SendSMSServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.SendSMSServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.SendSMSServlet</servlet-class>
     </servlet>
-    <!-- ── Existing servlet mappings (unchanged) ─────────────────────────── -->
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.ProfileServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.ProfileServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HomeServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.HomeServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.HomeServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SmsSearchServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.SmsSearchServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.SmsSearchServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SmsDeleteServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.SmsDeleteServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.SmsDeleteServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>com.mycompany.twilio.LogoutServlet</servlet-class>
+        <servlet-class>com.mycompany.twilio.servlet.LogoutServlet</servlet-class>
     </servlet>
+     ── Admin servlets ────────────────────────────────────────────── 
+     These servlets use @WebServlet annotations for their URL mappings.
+         Do NOT declare them here in web.xml, as that would override the
+         annotations and require explicit <servlet-mapping> entries. 
+    
+     ── Servlet mappings ─────────────────────────── 
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
@@ -112,28 +112,6 @@
         <servlet-name>InboundSMSWebhookServlet</servlet-name>
         <url-pattern>/InboundSMSWebhookServlet</url-pattern>
     </servlet-mapping>
-    <!-- ── New admin servlet mappings ────────────────────────────────────── -->
-    <servlet-mapping>
-        <servlet-name>AddCustomerServlet</servlet-name>
-        <url-pattern>/AddCustomerServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditCustomerServlet</servlet-name>
-        <url-pattern>/EditCustomerServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DeleteCustomerServlet</servlet-name>
-        <url-pattern>/DeleteCustomerServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ListCustomersServlet</servlet-name>
-        <url-pattern>/ListCustomersServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerStatsServlet</servlet-name>
-        <url-pattern>/CustomerStatsServlet</url-pattern>
-    </servlet-mapping>
-    <!-- ── Session timeout (30 minutes, same as before) ─────────────────── -->
     <servlet-mapping>
         <servlet-name>ProfileServlet</servlet-name>
         <url-pattern>/ProfileServlet</url-pattern>
@@ -153,8 +131,38 @@
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>-->
+<!--     ── Admin servlet mappings ────────────────────────────────────── 
+    <servlet-mapping>
+        <servlet-name>AddCustomerServlet</servlet-name>
+        <url-pattern>/AddCustomerServlet</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCustomerServlet</servlet-name>
+        <url-pattern>/EditCustomerServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteCustomerServlet</servlet-name>
+        <url-pattern>/DeleteCustomerServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListCustomersServlet</servlet-name>
+        <url-pattern>/ListCustomersServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerStatsServlet</servlet-name>
+        <url-pattern>/CustomerStatsServlet</url-pattern>
+    </servlet-mapping>-->
+    <!-- ── Session timeout (30 minutes, same as before) ─────────────────── -->
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
+    <!--  ══════════════════════════════════════════════════════════════════
+         WELCOME FILES — visited when the root path /twilio is requested
+    ═══════════════════════════════════════════════════════════════════════  -->
+    <welcome-file-list>
+        <welcome-file>Login.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>
