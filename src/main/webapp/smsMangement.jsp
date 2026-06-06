@@ -4,7 +4,7 @@
     Author     : mohamed
 --%>
 
-<%@page import="com.mycompany.twilio.Message"%>
+<%@page import="com.mycompany.twilio.model.Message"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%@page import="java.util.List"%>
