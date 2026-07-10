@@ -1,210 +1,269 @@
-<%-- 
-    Document   : profile
-    Created on : May 18, 2026, 12:40:27 PM
-    Author     : mohamed
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" %>
-
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-
-    <title>User Profile</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings — SMS Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0f0c1d;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #7c3aed, #4f46e5);
+            top: -150px; left: -150px;
+        }
+        body::after {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #0ea5e9, #6366f1);
+            bottom: -100px; right: -100px;
         }
 
-        .container {
-            width: 550px;
-            margin: 40px auto;
-            background-color: white;
-            padding: 25px;
+        .card {
+            position: relative; z-index: 10;
+            width: 100%; max-width: 760px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            padding: 32px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .header-icon {
+            width: 48px; height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+        }
+        .card-header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .card-header p { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 2px; }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 16px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px gray;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        .card-body { padding: 36px 40px; }
 
-        h3 {
-            margin-top: 25px;
-            color: #007BFF;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-        .field {
-            margin-top: 15px;
-        }
+        .form-group { margin-bottom: 0; }
+        label { display: block; color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input,
-        textarea {
+        input, textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: #f1f5f9;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
-
-        textarea {
-            resize: vertical;
-            height: 80px;
+        textarea { resize: vertical; min-height: 90px; }
+        input::placeholder, textarea::placeholder { color: #475569; }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: rgba(124,58,237,0.08);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
         }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.5); }
 
-        button {
-            width: 100%;
-            margin-top: 25px;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
+        .hint { color: #475569; font-size: 11px; margin-top: 6px; }
+
+        .section-divider {
+            margin: 28px 0;
             border: none;
-            border-radius: 5px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+        .section-label {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-label-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(79,70,229,0.3));
+            border: 1px solid rgba(124,58,237,0.4);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+        .section-label span { color: #818cf8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        .twilio-section {
+            background: rgba(124,58,237,0.06);
+            border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
             font-size: 15px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-top: 28px;
+            box-shadow: 0 4px 20px rgba(124,58,237,0.4);
         }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.5); }
+        .btn:active { transform: translateY(0); }
 
-        button:hover {
-            background-color: #0056b3;
+        @media (max-width: 600px) {
+            .row, .grid-3 { grid-template-columns: 1fr; }
+            .card-body { padding: 24px 20px; }
+            .card-header { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
+            .back-btn { align-self: flex-start; }
         }
-
     </style>
-
 </head>
-
 <body>
-
-<div class="container">
-
-    <h2>User Profile</h2>
-
-    <form action="profile" method="post">
-
-        <h3>Personal Information</h3>
-
-        <div class="field">
-
-            <label>Full Name</label>
-
-            <input
-                    type="text"
-                    name="fullName"
-                    value="${user.fullName}"
-                    required
-            >
+    <div class="card">
+        <div class="card-header">
+            <div class="header-left">
+                <div class="header-icon">⚙️</div>
+                <div>
+                    <h1>Profile Settings</h1>
+                    <p>Manage your account settings and APIs</p>
+                </div>
+            </div>
+            <a href="home" class="back-btn">← Dashboard</a>
         </div>
 
-        <div class="field">
+        <div class="card-body">
+            <form action="profile" method="post">
 
-            <label>Email</label>
+                <!-- Personal Info -->
+                <div class="section-label">
+                    <div class="section-label-icon">👤</div>
+                    <span>Personal Information</span>
+                </div>
 
-            <input
-                    type="email"
-                    name="email"
-                    value="${user.email}"
-                    required
-            >
+                <div class="row" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" value="${user.fullName}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday">Birthday</label>
+                        <input type="date" id="birthday" name="birthday" value="${user.birthday}">
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" value="${user.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="msisdn">Phone Number</label>
+                        <input type="tel" id="msisdn" name="msisdn" value="${user.msisdn}">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="job">Job Title</label>
+                    <input type="text" id="job" name="job" value="${user.job}">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="physicalAddress">Address</label>
+                    <textarea id="physicalAddress" name="physicalAddress">${user.physicalAddress}</textarea>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Twilio Settings -->
+                <div class="section-label">
+                    <div class="section-label-icon">📡</div>
+                    <span>Twilio Settings</span>
+                </div>
+
+                <div class="twilio-section">
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label for="accountSid">Account SID</label>
+                            <input type="text" id="accountSid" name="accountSid" value="${user.twilioAccountSid}">
+                        </div>
+                        <div class="form-group">
+                            <label for="authToken">Auth Token</label>
+                            <input type="password" id="authToken" name="authToken" placeholder="Enter new token">
+                            <div class="hint">Leave blank to keep current</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="senderId">Sender Number</label>
+                            <input type="text" id="senderId" name="senderId" value="${user.twilioSenderId}">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">Update Settings →</button>
+            </form>
         </div>
-
-        <div class="field">
-
-            <label>Phone Number</label>
-
-            <input
-                    type="text"
-                    name="msisdn"
-                    value="${user.msisdn}"
-            >
-        </div>
-
-        <div class="field">
-
-            <label>Job Title</label>
-
-            <input
-                    type="text"
-                    name="job"
-                    value="${user.job}"
-            >
-        </div>
-
-        <div class="field">
-
-            <label>Birthday</label>
-
-            <input
-                    type="date"
-                    name="birthday"
-                    value="${user.birthday}"
-            >
-        </div>
-
-        <div class="field">
-
-            <label>Address</label>
-
-            <textarea
-                    name="physicalAddress"
-            >${user.physicalAddress}</textarea>
-        </div>
-
-        <h3>Twilio Settings</h3>
-
-        <div class="field">
-
-            <label>Account SID</label>
-
-            <input
-                    type="text"
-                    name="accountSid"
-                    value="${user.twilioAccountSid}"
-            >
-        </div>
-
-        <div class="field">
-
-            <label>Auth Token</label>
-
-            <input
-                    type="password"
-                    name="authToken"
-                    placeholder="Enter new token"
-            >
-        </div>
-
-        <div class="field">
-
-            <label>Sender Number</label>
-
-            <input
-                    type="text"
-                    name="senderId"
-                    value="${user.twilioSenderId}"
-            >
-        </div>
-
-        <button type="submit">
-            Update Profile
-        </button>
-
-    </form>
-
-</div>
-
+    </div>
 </body>
-
 </html>

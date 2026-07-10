@@ -3,170 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SMS Platform</title>
+    <title>Login — SMS Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: #0f0c1d;
             overflow: hidden;
+            position: relative;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+        /* Animated gradient orbs */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: drift 12s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #7c3aed, #4f46e5);
+            top: -150px; left: -150px;
+        }
+        body::after {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #0ea5e9, #6366f1);
+            bottom: -100px; right: -100px;
+            animation-delay: -6s;
+        }
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(40px, 30px) scale(1.1); }
         }
 
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
+        .card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            margin: 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
         }
-
-        .form-container {
-            padding: 40px;
+        .logo-icon {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
         }
+        .logo-text { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo-text span { color: #818cf8; }
 
-        .form-group {
+        h1 { color: #f1f5f9; font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 32px; }
+
+        .alert {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
             margin-bottom: 20px;
         }
+        .alert.show { display: flex; }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: #cbd5e1; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
 
         input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: #f1f5f9;
             font-size: 14px;
-            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
-
+        input::placeholder { color: #475569; }
         input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #7c3aed;
+            background: rgba(124,58,237,0.08);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
         }
 
-        button {
+        .btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
+            transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+            margin-top: 8px;
+            box-shadow: 0 4px 20px rgba(124,58,237,0.4);
         }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.5); }
+        .btn:active { transform: translateY(0); }
 
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        /* Error Banner Logic */
-        .error-banner {
-            background: #fdf7f7;
-            color: #d9534f;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ebccd1;
-            font-size: 13px;
-            display: none; /* Hidden by default */
-            text-align: center;
-        }
-
-        .footer-links {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
+        .footer { text-align: center; margin-top: 28px; color: #64748b; font-size: 13px; }
+        .footer a { color: #818cf8; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .footer a:hover { color: #a5b4fc; }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header">
-            <h1>Welcome Back</h1>
-            <p>Please enter your details to login</p>
+    <div class="card">
+        <div class="logo">
+            <div class="logo-icon">💬</div>
+            <div class="logo-text">SMS<span>Platform</span></div>
         </div>
-        
-        <div class="form-container">
-            <div id="loginError" class="error-banner">
-                Invalid email or password. Please try again.
-            </div>
-            
-            <form action="LoginServlet" method="POST">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="name@example.com">
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="••••••••">
-                </div>
 
-                <button type="submit">Login</button>
-            </form>
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to your account to continue</p>
 
-            <div class="footer-links">
-                Don't have an account? <a href="Registration.html">Register here</a>
+        <div id="loginError" class="alert">
+            <span>⚠️</span> Invalid email or password. Please try again.
+        </div>
+
+        <form action="LoginServlet" method="POST">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com">
             </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn">Sign In →</button>
+        </form>
+
+        <div class="footer">
+            Don't have an account? <a href="Registration.html">Create one</a>
         </div>
     </div>
 
     <script>
-        // Check if the Servlet redirected here with an error parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('error') === '1') {
-            document.getElementById('loginError').style.display = 'block';
+        if (new URLSearchParams(window.location.search).get('error') === '1') {
+            document.getElementById('loginError').classList.add('show');
         }
     </script>
-
 </body>
 </html>

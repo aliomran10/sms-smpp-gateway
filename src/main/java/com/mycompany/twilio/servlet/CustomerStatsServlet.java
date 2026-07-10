@@ -63,7 +63,7 @@ public class CustomerStatsServlet extends HttpServlet {
             try {
                 userId = Integer.parseInt(idParam.trim());
             } catch (NumberFormatException e) {
-                response.sendRedirect("ListCustomersServlet");
+                response.sendRedirect("admin/customers");
                 return;
             }
             renderDetail(out, userId, request);
@@ -90,7 +90,7 @@ public class CustomerStatsServlet extends HttpServlet {
         out.println("<div class='card'>");
         out.println("<div class='header'>");
         out.println("<h1>SMS Statistics — All Customers</h1>");
-        out.println("<a href='ListCustomersServlet'>← Back to Customers</a>");
+        out.println("<a href='admin/customers'>← Back to Customers</a>");
         out.println("</div><div class='body'>");
 
         // Search toolbar
@@ -130,7 +130,7 @@ public class CustomerStatsServlet extends HttpServlet {
                         + "       COUNT(m.msg_id) AS total_sms, "
                         + "       MAX(m.sent_at)  AS last_sent "
                         + "FROM   users u "
-                        + "LEFT JOIN messages m ON m.msisdn = u.msisdn "
+                        + "LEFT JOIN messages m ON m.sender_no = u.msisdn "
                         + "WHERE  u.is_admin = FALSE "
                         + "  AND (LOWER(u.full_name) LIKE LOWER(?) "
                         + "       OR LOWER(u.email)  LIKE LOWER(?) "
@@ -148,7 +148,7 @@ public class CustomerStatsServlet extends HttpServlet {
                         + "       COUNT(m.msg_id) AS total_sms, "
                         + "       MAX(m.sent_at)  AS last_sent "
                         + "FROM   users u "
-                        + "LEFT JOIN messages m ON m.msisdn = u.msisdn "
+                        + "LEFT JOIN messages m ON m.sender_no = u.msisdn "
                         + "WHERE  u.is_admin = FALSE "
                         + "GROUP  BY u.user_id, u.full_name, u.email, u.msisdn "
                         + "ORDER  BY total_sms DESC, u.full_name ASC"
@@ -232,7 +232,7 @@ public class CustomerStatsServlet extends HttpServlet {
                     + "       COUNT(m.msg_id) AS total_sms, "
                     + "       MAX(m.sent_at)  AS last_sent "
                     + "FROM   users u "
-                    + "LEFT JOIN messages m ON m.msisdn = u.msisdn "
+                    + "LEFT JOIN messages m ON m.sender_no = u.msisdn "
                     + "WHERE  u.user_id = ? AND u.is_admin = FALSE "
                     + "GROUP  BY u.user_id, u.full_name, u.email, u.msisdn"
             );
@@ -271,7 +271,7 @@ public class CustomerStatsServlet extends HttpServlet {
             PreparedStatement dayPs = con.prepareStatement(
                     "SELECT DATE(m.sent_at) AS day, COUNT(*) AS sms_sent "
                     + "FROM   messages m "
-                    + "JOIN   users    u ON u.msisdn = m.msisdn "
+                    + "JOIN   users    u ON u.msisdn = m.sender_no "
                     + "WHERE  u.user_id = ? "
                     + "GROUP  BY DATE(m.sent_at) "
                     + "ORDER  BY day DESC"

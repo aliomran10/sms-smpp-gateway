@@ -3,240 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Registration - SMS Platform</title>
+    <title>Register — SMS Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            padding: 20px;
+            background: #0f0c1d;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #7c3aed, #4f46e5);
+            top: -150px; left: -150px;
+        }
+        body::after {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #0ea5e9, #6366f1);
+            bottom: -100px; right: -100px;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        .card {
+            position: relative; z-index: 10;
+            width: 100%; max-width: 760px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
             overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+        .card-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            padding: 32px 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
+        .header-icon {
+            width: 48px; height: 48px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+        }
+        .card-header h1 { color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .card-header p { color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 2px; }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+        .card-body { padding: 36px 40px; }
 
-        .header p {
-            opacity: 0.9;
-        }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-        .form-container {
-            padding: 40px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .required:after {
-            content: " *";
-            color: red;
-        }
+        .form-group { margin-bottom: 0; }
+        label { display: block; color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        label.required::after { content: ' *'; color: #f87171; }
 
         input, select, textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 13px 16px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: #f1f5f9;
             font-size: 14px;
-            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
         }
-
+        textarea { resize: vertical; min-height: 90px; }
+        input::placeholder, textarea::placeholder { color: #475569; }
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #7c3aed;
+            background: rgba(124,58,237,0.08);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
         }
+        select option { background: #1e1b4b; color: #f1f5f9; }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1) opacity(0.5); }
 
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .hint { color: #475569; font-size: 11px; margin-top: 6px; }
+
+        .section-divider {
+            margin: 28px 0;
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            position: relative;
         }
+        .section-label {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-label-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(79,70,229,0.3));
+            border: 1px solid rgba(124,58,237,0.4);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+        .section-label span { color: #818cf8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         .twilio-section {
-            background: #f7f7f7;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border: 2px solid #e0e0e0;
+            background: rgba(124,58,237,0.06);
+            border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 16px;
+            padding: 24px;
         }
 
-        .twilio-section h3 {
-            margin-bottom: 15px;
-            color: #667eea;
-        }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
-        button {
+        .btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 15px;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
+            font-family: 'Inter', sans-serif;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.15s, box-shadow 0.2s;
+            margin-top: 28px;
+            box-shadow: 0 4px 20px rgba(124,58,237,0.4);
         }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.5); }
+        .btn:active { transform: translateY(0); }
 
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .error-message {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .info-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
+        .footer-note { text-align: center; color: #64748b; font-size: 13px; margin-top: 20px; }
+        .footer-note a { color: #818cf8; text-decoration: none; font-weight: 600; }
+        .footer-note a:hover { color: #a5b4fc; }
 
         @media (max-width: 600px) {
-            .row {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
+            .row, .grid-3 { grid-template-columns: 1fr; }
+            .card-body { padding: 24px 20px; }
+            .card-header { padding: 24px 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Create Customer Account</h1>
-            <p>Register to start sending SMS messages</p>
+    <div class="card">
+        <div class="card-header">
+            <div class="header-icon">✨</div>
+            <div>
+                <h1>Create your account</h1>
+                <p>Start sending SMS messages in minutes</p>
+            </div>
         </div>
-        
-        <div class="form-container">
-            <div id="successMessage" class="success-message"></div>
-            
-            <form id="registrationForm" action="RegisterServlet" method="POST" >
-                <div class="row">
+
+        <div class="card-body">
+            <form id="registrationForm" action="RegisterServlet" method="POST">
+
+                <!-- Personal Info -->
+                <div class="section-label">
+                    <div class="section-label-icon">👤</div>
+                    <span>Personal Information</span>
+                </div>
+
+                <div class="row" style="margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="fullName" class="required">Full Name</label>
-                        <input type="text" id="fullName" name="fullName" required>
-                        <div class="error-message" id="fullNameError">Please enter your full name</div>
+                        <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="birthday">Birthday</label>
                         <input type="date" id="birthday" name="birthday">
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="email" class="required">Email Address</label>
-                        <input type="email" id="email" name="email" required>
-                        <div class="error-message" id="emailError">Please enter a valid email address</div>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="msisdn" class="required">Phone Number (MSISDN)</label>
+                        <label for="msisdn" class="required">Phone Number</label>
                         <input type="tel" id="msisdn" name="msisdn" placeholder="+1234567890" required>
-                        <div class="info-text">Enter your phone number with country code (e.g., +1234567890)</div>
-                        <div class="error-message" id="msisdnError">Please enter a valid phone number</div>
+                        <div class="hint">Include country code (e.g. +20...)</div>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="margin-bottom: 20px;">
                     <div class="form-group">
                         <label for="job">Job Title</label>
-                        <input type="text" id="job" name="job">
+                        <input type="text" id="job" name="job" placeholder="Software Engineer">
                     </div>
-                    
                     <div class="form-group">
                         <label for="password" class="required">Password</label>
-                        <input type="password" id="password" name="password" required>
-                        <div class="info-text">Password must be at least 6 characters</div>
-                        <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+                        <input type="password" id="password" name="password" placeholder="Min. 6 characters" required>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="physicalAddress">Physical Address</label>
-                    <textarea id="physicalAddress" name="physicalAddress" rows="3"></textarea>
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="physicalAddress">Address</label>
+                    <textarea id="physicalAddress" name="physicalAddress" placeholder="123 Main Street, City, Country"></textarea>
+                </div>
+
+                <hr class="section-divider">
+
+                <!-- Twilio Settings -->
+                <div class="section-label">
+                    <div class="section-label-icon">📡</div>
+                    <span>Twilio Configuration</span>
                 </div>
 
                 <div class="twilio-section">
-                    <h3>Twilio Account Configuration</h3>
-                    <div class="form-group">
-                        <label for="twilioSid" class="required">Twilio Account SID</label>
-                        <input type="text" id="twilioSid" name="twilioSid" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" required maxlength="34">
-                        <div class="info-text">Find this in your Twilio Console Dashboard</div>
-                        <div class="error-message" id="twilioSidError">Account SID must be 34 characters starting with 'AC'</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="twilioToken" class="required">Twilio Auth Token</label>
-                        <input type="password" id="twilioToken" name="twilioToken" required>
-                        <div class="info-text">Find this in your Twilio Console Dashboard</div>
-                        <div class="error-message" id="twilioTokenError">Auth token is required</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="twilioSender" class="required">Twilio Sender ID (Phone Number)</label>
-                        <input type="text" id="twilioSender" name="twilioSender" placeholder="+1234567890" required>
-                        <div class="info-text">Your Twilio phone number that will send SMS messages</div>
-                        <div class="error-message" id="twilioSenderError">Please enter a valid phone number</div>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label for="twilioSid" class="required">Account SID</label>
+                            <input type="text" id="twilioSid" name="twilioSid" placeholder="ACxxxxxxxxxxxxxxxx" required maxlength="34">
+                            <div class="hint">From Twilio Console Dashboard</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioToken" class="required">Auth Token</label>
+                            <input type="password" id="twilioToken" name="twilioToken" placeholder="••••••••••••••••" required>
+                            <div class="hint">From Twilio Console Dashboard</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioSender" class="required">Sender Number</label>
+                            <input type="text" id="twilioSender" name="twilioSender" placeholder="+1234567890" required>
+                            <div class="hint">Your Twilio phone number</div>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit">Register Account</button>
+                <button type="submit" class="btn">Create Account →</button>
             </form>
+
+            <div class="footer-note">
+                Already have an account? <a href="Login.html">Sign in</a>
+            </div>
         </div>
     </div>
 </body>

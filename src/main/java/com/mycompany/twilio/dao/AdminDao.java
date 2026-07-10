@@ -176,7 +176,7 @@ public class AdminDao {
                         TO_CHAR(MAX(m.sent_at), 'YYYY-MM-DD HH24:MI')         AS last_activity
                 FROM    users u
                 LEFT JOIN messages m
-                       ON m.msisdn = u.msisdn
+                       ON m.sender_no = u.msisdn
                           OR m.recipient_no = u.msisdn
                 WHERE   u.is_admin = FALSE
                 GROUP   BY u.user_id, u.full_name, u.email, u.msisdn
@@ -220,7 +220,7 @@ public class AdminDao {
                         TO_CHAR(MAX(m.sent_at), 'YYYY-MM-DD HH24:MI')         AS last_activity
                 FROM    users u
                 LEFT JOIN messages m
-                       ON m.msisdn = u.msisdn
+                       ON m.sender_no = u.msisdn
                           OR m.recipient_no = u.msisdn
                 WHERE   u.user_id = ?
                 GROUP   BY u.user_id, u.full_name, u.email, u.msisdn
