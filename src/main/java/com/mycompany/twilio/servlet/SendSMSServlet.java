@@ -99,31 +99,26 @@ public class SendSMSServlet extends HttpServlet {
                         // Save message to DB
                         PreparedStatement insert = con.prepareStatement(
                                         "INSERT INTO messages "
-                                                        + "(msisdn, recipient_no, "
-                                                        + "sender_no, msg_text, user) "
-                                                        + "VALUES (?, ?, ?, ?, ?)");
+                                                        + "(sender_no, recipient_no, msg) "
+                                                        + "VALUES (?, ?, ?)");
 
-                        insert.setString(1, msisdn);
+                        insert.setString(1, sender);
 
                         insert.setString(2, to);
 
-                        insert.setString(3, sender);
-
-                        insert.setString(4, body);
-
-                        insert.setInt(5, userId);
+                        insert.setString(3, body);
 
                         insert.executeUpdate();
 
                         response.sendRedirect(
-                                        "sendSMS.html?success=1");
+                                        "SendSMS.html?success=1");
 
                 } catch (Exception e) {
 
                         e.printStackTrace();
 
                         response.sendRedirect(
-                                        "sendSMS.html?error=1");
+                                        "SendSMS.html?error=1");
                 }
         }
 }
