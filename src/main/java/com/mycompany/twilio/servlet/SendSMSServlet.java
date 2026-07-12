@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.bean.BindType;
@@ -113,6 +115,8 @@ public class SendSMSServlet extends HttpServlet {
             // -------------------------
             SMPPSession smppSession = new SMPPSession();
 
+            boolean sendSucceeded = false;
+
             try {
 
                 smppSession.connectAndBind(
@@ -151,7 +155,23 @@ public class SendSMSServlet extends HttpServlet {
 
                 System.out.println("SMS sent successfully.");
                 System.out.println("Message ID = " + messageId);
+                sendSucceeded = true;
 
+                saveMessage(con, msisdn, to, sender, body, false);
+                response.sendRedirect(SMS_PAGE + "?success=1");
+
+            } catch (Exception e) {
+                try {
+                    saveMessage(con, msisdn, to, sender, body, true);
+                    System.out.println("Saved failed SMS to failed_messages table");
+                } catch (Exception failedInsertEx) {
+                    System.out.println("Failed to save SMS to failed_messages table");
+                    failedInsertEx.printStackTrace();
+                    e.addSuppressed(failedInsertEx);
+                }
+
+                e.printStackTrace();
+                response.sendRedirect(SMS_PAGE + "?error=1");
             } finally {
 
                 try {
@@ -162,29 +182,66 @@ public class SendSMSServlet extends HttpServlet {
                 }
             }
 
-            // -------------------------
-            // Save message in database
-            // -------------------------
-            try (PreparedStatement insert = con.prepareStatement(
-                    "INSERT INTO messages "
-                    + "(msisdn, recipient_no, sender_no, msg) "
-                    + "VALUES (?, ?, ?, ?)")) {
-
-                insert.setString(1, msisdn);
-                insert.setString(2, to);
-                insert.setString(3, sender);
-                insert.setString(4, body);
-
-                insert.executeUpdate();
-            }
-
-            response.sendRedirect(SMS_PAGE + "?success=1");
-
         } catch (Exception e) {
 
             e.printStackTrace();
             response.sendRedirect(SMS_PAGE + "?error=1");
         }
+    }
+
+    private void saveMessage(Connection con,
+                             String msisdn,
+                             String recipient,
+                             String sender,
+                             String body,
+                             boolean failed) throws SQLException {
+
+        String table = failed ? "failed_messages" : "messages";
+
+        System.out.println("Persisting message to table: " + table);
+
+        try {
+            insertMessage(con, table, msisdn, recipient, sender, body);
+        } catch (SQLException e) {
+            if (failed && isForeignKeyViolation(e) && msisdn != null && !msisdn.isBlank()) {
+                System.out.println("Foreign key violation on msisdn for failed_messages; retrying with NULL");
+                insertMessage(con, table, null, recipient, sender, body);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private void insertMessage(Connection con,
+                               String table,
+                               String msisdn,
+                               String recipient,
+                               String sender,
+                               String body) throws SQLException {
+
+        try (PreparedStatement insert = con.prepareStatement(
+                "INSERT INTO " + table + " "
+                + "(msisdn, recipient_no, sender_no, msg) "
+                + "VALUES (?, ?, ?, ?)")) {
+
+            if (msisdn == null || msisdn.isBlank()) {
+                insert.setNull(1, Types.VARCHAR);
+            } else {
+                insert.setString(1, msisdn);
+            }
+
+            insert.setString(2, recipient);
+            insert.setString(3, sender);
+            insert.setString(4, body);
+
+            int rows = insert.executeUpdate();
+            System.out.println("Inserted " + rows + " row(s) into " + table);
+        }
+    }
+
+    private boolean isForeignKeyViolation(SQLException e) {
+        String sqlState = e.getSQLState();
+        return "23503".equals(sqlState) || (e.getMessage() != null && e.getMessage().toLowerCase().contains("foreign key"));
     }
 
     private String trimToNull(String value) {
