@@ -8,6 +8,8 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.TimeZone;
 import jakarta.servlet.ServletContext;
 
 /**
@@ -20,10 +22,14 @@ public class DBConnectionInitializer implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
+            TimeZone.setDefault(TimeZone.getTimeZone("Africa/Cairo"));
             Class.forName("org.postgresql.Driver");
             Connection con = DriverManager.getConnection(
                     "jdbc:postgresql://ep-dawn-base-ag3iq1vt-pooler.c-2.eu-central-1.aws.neon.tech/Twilio-SMS-Management?sslmode=require&channelBinding=require",
                     "neondb_owner", "npg_jwyQ23SJiUoz");
+            try (Statement statement = con.createStatement()) {
+                statement.execute("SET TIME ZONE 'Africa/Cairo'");
+            }
             ServletContext ctx = sce.getServletContext();
             ctx.setAttribute("DBConnection", con);
 

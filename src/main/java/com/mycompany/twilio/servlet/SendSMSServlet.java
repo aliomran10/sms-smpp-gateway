@@ -13,7 +13,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.bean.BindType;
@@ -25,6 +28,8 @@ import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
 
+import com.mycompany.twilio.util.FailedMessageResender;
+
 @WebServlet("/SendSMSServlet")
 public class SendSMSServlet extends HttpServlet {
 
@@ -35,6 +40,7 @@ public class SendSMSServlet extends HttpServlet {
     private static final String SMPP_ADDRESS_RANGE = "6666";
     private static final String DEFAULT_SENDER = "6666";
     private static final String SMS_PAGE = "SendSMS.html";
+    private static final int DEFAULT_VALIDITY_PERIOD_MINUTES = 5;
 
     @Override
     protected void doGet(HttpServletRequest request,
@@ -56,6 +62,8 @@ public class SendSMSServlet extends HttpServlet {
             // Form data
             String to = trimToNull(request.getParameter("to"));
             String body = trimToNull(request.getParameter("body"));
+            int validityPeriodMinutes = FailedMessageResender.normalizeValidityPeriodMinutes(
+                    request.getParameter("validityPeriodMinutes"));
 
             if (to == null || body == null) {
                 response.sendRedirect(SMS_PAGE + "?error=1");
@@ -157,12 +165,12 @@ public class SendSMSServlet extends HttpServlet {
                 System.out.println("Message ID = " + messageId);
                 sendSucceeded = true;
 
-                saveMessage(con, msisdn, to, sender, body, false);
+                saveMessage(con, msisdn, to, sender, body, false, validityPeriodMinutes);
                 response.sendRedirect(SMS_PAGE + "?success=1");
 
             } catch (Exception e) {
                 try {
-                    saveMessage(con, msisdn, to, sender, body, true);
+                    saveMessage(con, msisdn, to, sender, body, true, validityPeriodMinutes);
                     System.out.println("Saved failed SMS to failed_messages table");
                 } catch (Exception failedInsertEx) {
                     System.out.println("Failed to save SMS to failed_messages table");
@@ -194,18 +202,23 @@ public class SendSMSServlet extends HttpServlet {
                              String recipient,
                              String sender,
                              String body,
-                             boolean failed) throws SQLException {
+                             boolean failed,
+                             int validityPeriodMinutes) throws SQLException {
 
         String table = failed ? "failed_messages" : "messages";
+
+        // if (failed) {
+        //     ensureFailedMessagesSchema(con);
+        // }
 
         System.out.println("Persisting message to table: " + table);
 
         try {
-            insertMessage(con, table, msisdn, recipient, sender, body);
+            insertMessage(con, table, msisdn, recipient, sender, body, failed, validityPeriodMinutes);
         } catch (SQLException e) {
             if (failed && isForeignKeyViolation(e) && msisdn != null && !msisdn.isBlank()) {
                 System.out.println("Foreign key violation on msisdn for failed_messages; retrying with NULL");
-                insertMessage(con, table, null, recipient, sender, body);
+                insertMessage(con, table, null, recipient, sender, body, failed, validityPeriodMinutes);
             } else {
                 throw e;
             }
@@ -217,12 +230,27 @@ public class SendSMSServlet extends HttpServlet {
                                String msisdn,
                                String recipient,
                                String sender,
-                               String body) throws SQLException {
+                               String body,
+                               boolean failed,
+                               int validityPeriodMinutes) throws SQLException {
 
-        try (PreparedStatement insert = con.prepareStatement(
-                "INSERT INTO " + table + " "
-                + "(msisdn, recipient_no, sender_no, msg) "
-                + "VALUES (?, ?, ?, ?)")) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO ").append(table).append(" ");
+        sql.append("(msisdn, recipient_no, sender_no, msg");
+
+        if (failed) {
+            sql.append(", validity_period_minutes, next_retry_at");
+        }
+
+        sql.append(") VALUES (?, ?, ?, ?");
+
+        if (failed) {
+            sql.append(", ?, ?");
+        }
+
+        sql.append(")");
+
+        try (PreparedStatement insert = con.prepareStatement(sql.toString())) {
 
             if (msisdn == null || msisdn.isBlank()) {
                 insert.setNull(1, Types.VARCHAR);
@@ -234,10 +262,31 @@ public class SendSMSServlet extends HttpServlet {
             insert.setString(3, sender);
             insert.setString(4, body);
 
+            if (failed) {
+                insert.setInt(5, validityPeriodMinutes);
+                insert.setTimestamp(6, Timestamp.from(Instant.now().plus(Duration.ofMinutes(validityPeriodMinutes))));
+            }
+
             int rows = insert.executeUpdate();
             System.out.println("Inserted " + rows + " row(s) into " + table);
         }
     }
+
+    // next-retry timestamps are stored as absolute instants (TIMESTAMPTZ) in the database.
+    // We compute instants with UTC semantics and store them directly via JDBC.
+
+    // private void ensureFailedMessagesSchema(Connection con) throws SQLException {
+    //     try (PreparedStatement ps = con.prepareStatement(
+    //             "ALTER TABLE failed_messages ADD COLUMN IF NOT EXISTS validity_period_minutes INTEGER NOT NULL DEFAULT ?")) {
+    //         ps.setInt(1, DEFAULT_VALIDITY_PERIOD_MINUTES);
+    //         ps.executeUpdate();
+    //     }
+
+    //     try (PreparedStatement ps = con.prepareStatement(
+    //             "ALTER TABLE failed_messages ADD COLUMN IF NOT EXISTS next_retry_at TIMESTAMP")) {
+    //         ps.executeUpdate();
+    //     }
+    // }
 
     private boolean isForeignKeyViolation(SQLException e) {
         String sqlState = e.getSQLState();
