@@ -46,7 +46,11 @@ public class AddCustomerServlet extends HttpServlet {
         String twilioSid = request.getParameter("twilioSid");
         String twilioToken = request.getParameter("twilioToken");
         String twilioSender = request.getParameter("twilioSender");
-
+        
+                // If twilioSender is empty, default it to the customer's MSISDN
+                if ((twilioSender == null || twilioSender.isBlank()) && msisdn != null && !msisdn.isBlank()) {
+                        twilioSender = msisdn;
+                }
         // Basic server-side validation
         if (fullName == null || fullName.isBlank()
                 || email == null || email.isBlank()
