@@ -54,6 +54,9 @@ public class RegisterServlet extends HttpServlet {
         String twilioSid = request.getParameter("twilioSid");
         String twilioToken = request.getParameter("twilioToken");
         String twilioSender = request.getParameter("twilioSender");
+        if (twilioSender == null || twilioSender.trim().isEmpty()) {
+            twilioSender = msisdn;
+        }
 
         try {
             // getting the connection using servlet context
